@@ -1,0 +1,28 @@
+/; :foreach a in=[/ip firewall mangle find comment="PRIORIDADE DE PACOTES UP" || comment="PRIORIDADE DE PACOTES DOWN" || comment="0.1M" || comment="0.5M" || comment="2M" || comment="10M"] do={ /ip firewall mangle remove $a; log error "Removido $a";};
+ /ip firewall mangle
+add action=mark-connection chain=forward comment="PRIORIDADE DE PACOTES DOWN" connection-bytes=0-10000000 new-connection-mark=QOS out-interface=all-ppp \ passthrough=yes;
+add action=mark-connection chain=forward comment="PRIORIDADE DE PACOTES UP" connection-bytes=0-10000000 in-interface=all-ppp new-connection-mark=QOS \ passthrough=yes;
+add action=mark-packet chain=forward comment=0.1M connection-bytes=0-100000 connection-mark=QOS new-packet-mark=QOS_0.1M passthrough=yes;
+add action=mark-packet chain=forward comment=0.5M connection-bytes=100000-512000 connection-mark=QOS new-packet-mark=QOS_0.5M passthrough=yes;
+add action=mark-packet chain=forward comment=2M connection-bytes=1000000-2000000 connection-mark=QOS new-packet-mark=QOS_2M passthrough=yes;
+add action=mark-packet chain=forward comment=10M connection-bytes=5000000-10000000 connection-mark=QOS new-packet-mark=QOS_10M passthrough=yes;
+
+/system script
+add dont-require-permissions=no name=PPPOE_UP owner=pirrapro policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":delay 500ms;\
+    \_\r\
+    \n:foreach i in=[/queue simple find where name=\"<pppoe-\$user>\"] do={\r\
+    \n:local qName [/queue simple get \$i name]; \r\
+    \n/queue tree add name=\"0.1M-\$user\" packet-mark=\"QOS_0.1M\" parent=\"\$qName\"  comment=\"\$qName\" priority=\"1\" queue=\"default\";\r\
+    \n/queue tree add name=\"0.5M-\$user\" packet-mark=\"QOS_0.5M\" parent=\"\$qName\" comment=\"\$qName\" priority=\"2\" queue=\"default\";\r\
+    \n/queue tree add name=\"2M-\$user\" packet-mark=\"QOS_2M\" parent=\"\$qName\" comment=\"\$qName\" priority=\"3\" queue=\"default\";\r\
+    \n/queue tree add name=\"10M-\$user\" packet-mark=\"QOS_10M\" parent=\"\$qName\" comment=\"\$qName\" priority=\"4\" queue=\"default\";\r\
+    \n:log warning \"Criado Qos \$qName\"; }\r\
+    \n:beep frequency=150 length=200ms; \r\
+    \n"
+add dont-require-permissions=no name=PPPOE_DOW owner=pirrapro policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":foreach a i\
+    n=[/queue tree find where invalid] do={ /queue tree remove \$a };\r\
+    \nlog warning \"Removido Qos \$user\";\r\
+    \n:beep frequency=100 length=500ms;";
+/; :foreach a in=[/ppp profile find] do={/ppp profile set on-up="PPPOE_UP" on-down="PPPOE_DOW" $a;};
+/log warning "Inserido com sucesso Nao esqueca do like em nosso canal pirrainformatica"; :put "Inserido com sucesso nao esqueca do like em nosso canal pirrainformatica"
+/ip;
