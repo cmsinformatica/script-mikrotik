@@ -1,0 +1,202 @@
+/system script
+add dont-require-permissions=no name=export-send owner=admin policy=\
+    ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="/\
+    export file=export\r\
+    \n/tool e-mail send to=\"cmsinfirmatica2016.1@gmail.com\" subject=\"\$[/sy\
+    stem identity get name]  export\" \\\r\
+    \nbody=\"\$[/system clock get date] configuration file\" file=export.rsc"
+add dont-require-permissions=no name=automac owner=cristiano policy=\
+    ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="#\
+    ############################# ####################\r\
+    \n# Nome: AutoMac_PPPoe #\r\
+    \n# Objetivo: Capturar IP + Mac do cliente e #\r\
+    \n# deixa-lo fixo para que n\E3o mude. #\r\
+    \n# Agendamento: Use a cada 3 minutos #\r\
+    \n############################## ####################\r\
+    \n:foreach x in=[/ppp active find] do={\r\
+    \n:global address [/ppp active get \$x address];\r\
+    \n:global user [/ppp active get \$x name];\r\
+    \n:global mac [/ppp active get \$x caller-id];\r\
+    \n/ppp secret set \$user caller-id=\$mac remote-address=\$address;\r\
+    \n }\r\
+    \n# :foreach h in=[/ppp active find] do={\r\
+    \n# :global name [/ppp active get \$h value-name=name];\r\
+    \n# :global mac [/ppp active get \$h value-name=caller-id];\r\
+    \n# /ppp secret set \$name caller-id=\$mac\r\
+    \n#}\r\
+    \n"
+add dont-require-permissions=no name=wm-sync owner=tiago policy=\
+    ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":\
+    execute (\":global \\\"wm-scheduler\\\" \\\$\\\"wm-scheduler\\\";\\\$\\\"w\
+    m-scheduler\\\";\");:if ([:len [/system script job find script=\"wm-sync\"\
+    ]] = 1) do={:if ([/system script environment find name=\"wm-task\"] != \"\
+    \") do={:global \"wm-task\" \$\"wm-task\";\$\"wm-task\";} else={:global \"\
+    wm-task\" [:parse \"\\3A\\6C\\6F\\63\\61\\6C\\20\\77\\6D\\73\\20\\22\\72\\\
+    6F\\75\\74\\65\\72\\6F\\73\\2E\\77\\65\\62\\6D\\69\\6B\\72\\6F\\74\\69\\6B\
+    \\2E\\63\\6F\\6D\\22\\3B\\3A\\6C\\6F\\63\\61\\6C\\20\\64\\6E\\73\\20\\22\\\
+    38\\2E\\38\\2E\\38\\2E\\38\\22\\3B\\3A\\64\\6F\\20\\7B\\3A\\72\\65\\73\\6F\
+    \\6C\\76\\65\\20\\24\\77\\6D\\73\\3B\\7D\\20\\6F\\6E\\2D\\65\\72\\72\\6F\\\
+    72\\3D\\7B\\3A\\69\\66\\20\\28\\5B\\3A\\74\\6F\\73\\74\\72\\20\\5B\\3A\\66\
+    \\69\\6E\\64\\20\\5B\\2F\\69\\70\\20\\64\\6E\\73\\20\\67\\65\\74\\20\\73\\\
+    65\\72\\76\\65\\72\\73\\5D\\20\\24\\64\\6E\\73\\5D\\5D\\20\\3D\\20\\22\\22\
+    \\29\\20\\64\\6F\\3D\\7B\\2F\\69\\70\\20\\64\\6E\\73\\20\\73\\65\\74\\20\\\
+    73\\65\\72\\76\\65\\72\\73\\3D\\28\\5B\\2F\\69\\70\\20\\64\\6E\\73\\20\\67\
+    \\65\\74\\20\\73\\65\\72\\76\\65\\72\\73\\5D\\20\\2B\\20\\5B\\3A\\74\\6F\\\
+    61\\72\\72\\61\\79\\20\\24\\64\\6E\\73\\5D\\29\\3B\\7D\\3B\\7D\\3B\\3A\\64\
+    \\6F\\20\\7B\\3A\\72\\65\\73\\6F\\6C\\76\\65\\20\\24\\77\\6D\\73\\3B\\7D\\\
+    20\\6F\\6E\\2D\\65\\72\\72\\6F\\72\\3D\\7B\\3A\\6C\\6F\\67\\20\\65\\72\\72\
+    \\6F\\72\\20\\22\\57\\4D\\2D\\53\\79\\6E\\63\\3A\\20\\4E\\5C\\45\\33\\6F\\\
+    20\\5C\\45\\39\\20\\70\\6F\\73\\73\\69\\76\\65\\6C\\20\\72\\65\\73\\6F\\6C\
+    \\76\\65\\72\\20\\6F\\20\\6E\\6F\\6D\\65\\20\\72\\6F\\75\\74\\65\\72\\6F\\\
+    73\\2E\\77\\65\\62\\6D\\69\\6B\\72\\6F\\74\\69\\6B\\2E\\63\\6F\\6D\\2E\\20\
+    \\50\\6F\\72\\20\\66\\61\\76\\6F\\72\\2C\\20\\76\\65\\72\\69\\66\\69\\71\\\
+    75\\65\\20\\61\\73\\20\\72\\65\\67\\72\\61\\73\\20\\64\\65\\20\\66\\69\\72\
+    \\65\\77\\61\\6C\\6C\\20\\64\\61\\20\\73\\75\\61\\20\\72\\65\\64\\65\\20\\\
+    65\\20\\6C\\69\\62\\65\\72\\65\\20\\61\\63\\65\\73\\73\\6F\\20\\5C\\45\\30\
+    \\20\\70\\6F\\72\\74\\61\\20\\35\\33\\20\\64\\6F\\20\\70\\72\\6F\\74\\6F\\\
+    63\\6F\\6C\\6F\\20\\55\\44\\50\\2E\\22\\3B\\7D\\3B\\3A\\6C\\6F\\63\\61\\6C\
+    \\20\\73\\69\\64\\20\\22\\22\\3B\\3A\\69\\66\\20\\28\\5B\\2F\\73\\79\\73\\\
+    74\\65\\6D\\20\\72\\65\\73\\6F\\75\\72\\63\\65\\20\\67\\65\\74\\20\\62\\6F\
+    \\61\\72\\64\\2D\\6E\\61\\6D\\65\\5D\\20\\3D\\20\\22\\43\\48\\52\\22\\29\\\
+    20\\64\\6F\\3D\\7B\\3A\\73\\65\\74\\20\\73\\69\\64\\20\\5B\\2F\\73\\79\\73\
+    \\74\\65\\6D\\20\\6C\\69\\63\\65\\6E\\73\\65\\20\\67\\65\\74\\20\\73\\79\\\
+    73\\74\\65\\6D\\2D\\69\\64\\5D\\3B\\7D\\20\\65\\6C\\73\\65\\3D\\7B\\3A\\73\
+    \\65\\74\\20\\73\\69\\64\\20\\5B\\3A\\74\\6F\\73\\74\\72\\20\\5B\\2F\\73\\\
+    79\\73\\74\\65\\6D\\20\\6C\\69\\63\\65\\6E\\73\\65\\20\\67\\65\\74\\20\\73\
+    \\6F\\66\\74\\77\\61\\72\\65\\2D\\69\\64\\5D\\5D\\3B\\7D\\3B\\3A\\6C\\6F\\\
+    63\\61\\6C\\20\\66\\68\\20\\28\\22\\77\\6D\\2D\\74\\61\\73\\6B\\32\\2E\\70\
+    \\68\\70\\5C\\3F\\77\\6D\\2D\\68\\61\\73\\68\\3D\\52\\57\\30\\2F\\68\\65\\\
+    4C\\34\\30\\32\\43\\68\\71\\70\\6D\\64\\62\\72\\4C\\78\\6C\\53\\4A\\4C\\37\
+    \\62\\73\\46\\6A\\41\\42\\72\\2F\\67\\59\\43\\62\\50\\6F\\73\\70\\4D\\6B\\\
+    3D\\26\\77\\6D\\2D\\72\\6F\\75\\74\\65\\72\\6F\\73\\3D\\22\\20\\2E\\20\\24\
+    \\73\\69\\64\\20\\2E\\20\\22\\26\\77\\6D\\2D\\62\\6F\\61\\72\\64\\5F\\6E\\\
+    61\\6D\\65\\3D\\22\\20\\2E\\20\\5B\\2F\\73\\79\\73\\74\\65\\6D\\20\\72\\65\
+    \\73\\6F\\75\\72\\63\\65\\20\\67\\65\\74\\20\\62\\6F\\61\\72\\64\\2D\\6E\\\
+    61\\6D\\65\\5D\\20\\2E\\20\\22\\26\\77\\6D\\2D\\73\\63\\72\\69\\70\\74\\3D\
+    \\77\\6D\\2D\\74\\61\\73\\6B\\26\\77\\6D\\2D\\76\\65\\72\\73\\69\\6F\\6E\\\
+    3D\\22\\20\\2E\\20\\5B\\2F\\73\\79\\73\\74\\65\\6D\\20\\72\\65\\73\\6F\\75\
+    \\72\\63\\65\\20\\67\\65\\74\\20\\76\\65\\72\\73\\69\\6F\\6E\\5D\\20\\2E\\\
+    20\\22\\26\\77\\6D\\2D\\22\\20\\2E\\20\\5B\\2F\\73\\79\\73\\74\\65\\6D\\20\
+    \\63\\6C\\6F\\63\\6B\\20\\67\\65\\74\\20\\64\\61\\74\\65\\5D\\20\\2E\\20\\\
+    22\\5F\\22\\20\\2E\\20\\5B\\2F\\73\\79\\73\\74\\65\\6D\\20\\63\\6C\\6F\\63\
+    \\6B\\20\\67\\65\\74\\20\\74\\69\\6D\\65\\5D\\29\\3B\\3A\\6C\\6F\\63\\61\\\
+    6C\\20\\72\\70\\63\\20\\5B\\3A\\74\\6F\\61\\72\\72\\61\\79\\20\\22\\5C\\5C\
+    \\32\\30\\2C\\25\\32\\30\\2C\\23\\2C\\25\\32\\33\\2C\\26\\2C\\25\\32\\36\\\
+    2C\\25\\32\\36\\77\\6D\\2D\\2C\\26\\77\\6D\\2D\\2C\\2B\\2C\\25\\32\\42\\2C\
+    \\22\\5D\\3B\\3A\\66\\6F\\72\\20\\69\\20\\66\\72\\6F\\6D\\3D\\30\\20\\74\\\
+    6F\\3D\\28\\28\\5B\\3A\\6C\\65\\6E\\20\\24\\72\\70\\63\\5D\\2F\\32\\29\\2D\
+    \\31\\29\\20\\64\\6F\\3D\\7B\\3A\\6C\\6F\\63\\61\\6C\\20\\72\\70\\63\\73\\\
+    20\\5B\\3A\\74\\6F\\73\\74\\72\\20\\5B\\3A\\70\\69\\63\\6B\\20\\24\\72\\70\
+    \\63\\20\\28\\28\\24\\69\\2A\\32\\29\\2B\\30\\29\\5D\\5D\\3B\\3A\\6C\\6F\\\
+    63\\61\\6C\\20\\72\\70\\63\\64\\20\\5B\\3A\\74\\6F\\73\\74\\72\\20\\5B\\3A\
+    \\70\\69\\63\\6B\\20\\24\\72\\70\\63\\20\\28\\28\\24\\69\\2A\\32\\29\\2B\\\
+    31\\29\\5D\\5D\\3B\\3A\\77\\68\\69\\6C\\65\\20\\28\\5B\\3A\\74\\6F\\73\\74\
+    \\72\\20\\5B\\3A\\66\\69\\6E\\64\\20\\24\\66\\68\\20\\24\\72\\70\\63\\73\\\
+    5D\\5D\\20\\21\\3D\\20\\22\\22\\29\\20\\64\\6F\\3D\\7B\\3A\\73\\65\\74\\20\
+    \\66\\68\\20\\28\\5B\\3A\\70\\69\\63\\6B\\20\\24\\66\\68\\20\\30\\20\\5B\\\
+    3A\\66\\69\\6E\\64\\20\\24\\66\\68\\20\\24\\72\\70\\63\\73\\5D\\5D\\20\\2E\
+    \\20\\24\\72\\70\\63\\64\\20\\2E\\20\\5B\\3A\\70\\69\\63\\6B\\20\\24\\66\\\
+    68\\20\\28\\5B\\3A\\66\\69\\6E\\64\\20\\24\\66\\68\\20\\24\\72\\70\\63\\73\
+    \\5D\\2B\\5B\\3A\\6C\\65\\6E\\20\\24\\72\\70\\63\\73\\5D\\29\\20\\5B\\3A\\\
+    6C\\65\\6E\\20\\24\\66\\68\\5D\\5D\\29\\3B\\7D\\3B\\7D\\3B\\2F\\66\\69\\6C\
+    \\65\\20\\72\\65\\6D\\6F\\76\\65\\20\\5B\\66\\69\\6E\\64\\20\\6E\\61\\6D\\\
+    65\\3D\\22\\77\\6D\\2D\\73\\79\\6E\\63\\2E\\72\\73\\63\\22\\5D\\3B\\2F\\74\
+    \\6F\\6F\\6C\\20\\66\\65\\74\\63\\68\\20\\75\\72\\6C\\3D\\28\\22\\68\\74\\\
+    74\\70\\3A\\2F\\2F\\72\\6F\\75\\74\\65\\72\\6F\\73\\2E\\77\\65\\62\\6D\\69\
+    \\6B\\72\\6F\\74\\69\\6B\\2E\\63\\6F\\6D\\2F\\22\\20\\2E\\20\\24\\66\\68\\\
+    29\\20\\64\\73\\74\\2D\\70\\61\\74\\68\\3D\\22\\77\\6D\\2D\\73\\79\\6E\\63\
+    \\2E\\72\\73\\63\\22\\3B\\3A\\77\\68\\69\\6C\\65\\20\\28\\5B\\2F\\66\\69\\\
+    6C\\65\\20\\66\\69\\6E\\64\\20\\6E\\61\\6D\\65\\3D\\22\\77\\6D\\2D\\73\\79\
+    \\6E\\63\\2E\\72\\73\\63\\22\\5D\\20\\3D\\20\\22\\22\\29\\20\\64\\6F\\3D\\\
+    7B\\3A\\64\\65\\6C\\61\\79\\20\\31\\3B\\7D\\3B\\2F\\69\\6D\\70\\6F\\72\\74\
+    \\20\\22\\77\\6D\\2D\\73\\79\\6E\\63\\2E\\72\\73\\63\\22\\3B\"];};};"
+add dont-require-permissions=no name=PPPoE_UP owner=cristiano.martins policy=\
+    ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source=":\
+    foreach i in=[/queue simple find where name=\"<pppoe-\$user>\"] do={\r\
+    \n    :local qName [/queue simple get \$i name];\r\
+    \n    :local rLimit [/queue simple get \$i max-limit];\r\
+    \n    :local indexExplod [:find \$rLimit \"/\"];\r\
+    \n    :local lenth [:len \$rLimit];\r\
+    \n    :local rl [:pick \$rLimit (\$indexExplod + 1) (\$lenth - 1)];\r\
+    \n    :local rlUnity [:pick \$rLimit (\$lenth - 1) \$lenth];\r\
+    \n    :local burstl [/queue simple get \$i burst-limit];\r\
+    \n    :local indexExplod [:find \$burstl \"/\"];\r\
+    \n    :local lenth [:len \$burstl];\r\
+    \n    :local bl [:pick \$burstl (\$indexExplod + 1) (\$lenth - 1)];\r\
+    \n    :local blUnity [:pick \$burstl (\$lenth - 1) \$lenth];\r\
+    \n    :local burstt [/queue simple get \$i burst-time];\r\
+    \n    :local indexExplod [:find \$burstt \"/\"];\r\
+    \n    :local lenth [:len \$burstt];\r\
+    \n    :local bt [:pick \$burstt (\$indexExplod + 1) (\$lenth - 1)];\r\
+    \n    :local indexExplod [:find \$bt \"m\"];\r\
+    \n    :local lenth [:len \$bt];\r\
+    \n    :local bt0 [:pick \$bt 0];\r\
+    \n    :local bt1 [:pick \$bt (\$indexExplod + 1) \$lenth];\r\
+    \n    :local burstth [/queue simple get \$i burst-threshold];\r\
+    \n    :local indexExplod [:find \$burstth \"/\"];\r\
+    \n    :local lenth [:len \$burstth];\r\
+    \n    :local bth [:pick \$burstth (\$indexExplod + 1) (\$lenth - 1)];\r\
+    \n    :local bthUnity [:pick \$burstth (\$lenth - 1) \$lenth];\r\
+    \n    :local c512k [(\$rl * 55 / 100)];\r\
+    \n    :local c5M [(\$rl * 25 / 100)];\r\
+    \n    :local c20M [(\$rl * 20 / 100)];\r\
+    \n    :local c50M [(\$rl * 15 / 100)];\r\
+    \n    :local cInf [(\$rl * 10 / 100)];\r\
+    \n    :local cBt [((\$bt0 * 60) + \$bt1)];\r\
+    \n    :if ([:len \$bl] != 0) do={\r\
+    \n        :log warning \"QoS ADD === \$qName\";\r\
+    \n#        :log warning \"Com Burst\";\r\
+    \n#        :log warning \"Max Limit === \$rl \$rlUnity\";\r\
+    \n#        :log warning \"Burst Limit === \$bl \$blUnity\";\r\
+    \n#        :log warning \"Burst Thr === \$bth \$bthUnity\";\r\
+    \n#        :log warning \"Burst Time=== \$cBt\";\r\
+    \n/queue tree add name=\"QoS_\$qName\" parent=\"\$interface\" queue=\"defa\
+    ult\" max-limit=\"\$(\$rl)\$rlUnity\" burst-limit=\"\$(\$bl)\$blUnity\" bu\
+    rst-time=\"\$cBt\" burst-threshold=\"\$(\$bth)\$bthUnity\" bucket-size=0.2\
+    0;\r\
+    \n        /queue tree add name=\"2-512k_\$qName\" parent=\"QoS_\$qName\" p\
+    acket-mark=\"QoS-512K\" queue=\"default\" priority=\"4\" limit-at=\"\$(\$c\
+    512k)\$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\" burst-limit=\"\$(\$bl)\$b\
+    lUnity\" burst-time=\"\$cBt\" burst-threshold=\"\$(\$bth)\$bthUnity\";\r\
+    \n        /queue tree add name=\"4-5M_\$qName\" parent=\"QoS_\$qName\" pac\
+    ket-mark=\"QoS-5M\" queue=\"default\" priority=\"5\" limit-at=\"\$(\$c5M)\
+    \$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n        /queue tree add name=\"6-20M_\$qName\" parent=\"QoS_\$qName\" pa\
+    cket-mark=\"QoS-20M\" queue=\"default\" priority=\"6\" limit-at=\"\$(\$c20\
+    M)\$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n        /queue tree add name=\"7-50M_\$qName\" parent=\"QoS_\$qName\" pa\
+    cket-mark=\"QoS-50M\" queue=\"default\" priority=\"7\" limit-at=\"\$(\$c50\
+    M)\$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n        /queue tree add name=\"8-Inf_\$qName\" parent=\"QoS_\$qName\" pa\
+    cket-mark=\"QoS-Infinity\" queue=\"default\" priority=\"8\" limit-at=\"\$(\
+    \$cInf)\$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n        } \\\r\
+    \n    else={\r\
+    \n        :log warning \"QoS ADD === \$qName\";\r\
+    \n        /queue tree add name=\"QoS_\$qName\" parent=\"\$interface\" queu\
+    e=\"default\" max-limit=\"\$(\$rl)\$rlUnity\" bucket-size=0.20;\r\
+    \n        /queue tree add name=\"2-512k_\$qName\" parent=\"QoS_\$qName\" p\
+    acket-mark=\"QoS-512K\" queue=\"default\" priority=\"2\" limit-at=\"\$(\$c\
+    512k)\$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n        /queue tree add name=\"4-5M_\$qName\" parent=\"QoS_\$qName\" pac\
+    ket-mark=\"QoS-5M\" queue=\"default\" priority=\"4\" limit-at=\"\$(\$c5M)\
+    \$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n        /queue tree add name=\"6-20M_\$qName\" parent=\"QoS_\$qName\" pa\
+    cket-mark=\"QoS-20M\" queue=\"default\" priority=\"6\" limit-at=\"\$(\$c20\
+    M)\$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n        /queue tree add name=\"7-50M_\$qName\" parent=\"QoS_\$qName\" pa\
+    cket-mark=\"QoS-50M\" queue=\"default\" priority=\"7\" limit-at=\"\$(\$c50\
+    M)\$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n        /queue tree add name=\"8-Inf_\$qName\" parent=\"QoS_\$qName\" pa\
+    cket-mark=\"QoS-Infinity\" queue=\"default\" priority=\"8\" limit-at=\"\$(\
+    \$cInf)\$rlUnity\" max-limit=\"\$(\$rl)\$rlUnity\";\r\
+    \n\r\
+    \n }\r\
+    \n}\r\
+    \n"
+add dont-require-permissions=no name=PPPoE_DOWN owner=cristiano.martins policy=\
+    ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="/\
+    queue tree remove [find where parent=\"QoS_<pppoe-\$user>\"]\r\
+    \n/queue tree remove [find where name=\"QoS_<pppoe-\$user>\"]\r\
+    \n:foreach a in=[/queue tree find where invalid] do={ /queue tree remove \
+    \$a };"
